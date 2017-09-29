@@ -100,8 +100,10 @@ main = do
                                         ,("oauth_token_secret", BS.pack twitAccessTokenSecret)
                                         ]
                   trivial = LT.length $ renderMustache template (val & key "content" . _String .~ "")
-                  toot  = take (140 - fromIntegral trivial) $
-                          fromTagText =<< filter isTagText (parseTags statusContent)
+                  threshold = (140 - fromIntegral trivial)
+                  cont  = fromTagText =<< filter isTagText (parseTags statusContent)
+                  toot | length cont > threshold = take (threshold - 4) cont ++ "..."
+                       | otherwise = cont
                   go    = null statusMentions && accountUsername statusAccount == mastUserName
                   tweet = renderMustache template (val & key "content" . _String .~ T.pack toot)
               when go $ ignoreTwitterError $ discardValue $

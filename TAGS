@@ -1,0 +1,40 @@
+
+./Setup.hs,15
+main main1,2
+
+./src/Main.hs,1527
+module Main Main3,4
+data Twitter Twitter27,28
+data Twitter = Twitter Twitter27,28
+data Twitter = Twitter { twitAccessToken twitAccessToken27,28
+                       , twitAccessTokenSecret twitAccessTokenSecret28,29
+                       , twitConsumerKey twitConsumerKey29,30
+                       , twitConsumerSecret twitConsumerSecret30,31
+data Mastodon Mastodon34,35
+data Mastodon = Mastodon Mastodon34,35
+data Mastodon = Mastodon { mastInstance mastInstance34,35
+                         , mastOauthUri mastOauthUri35,36
+                         , mastApiUri mastApiUri36,37
+                         , mastStreamingUri mastStreamingUri37,38
+                         , mastUserName mastUserName38,39
+                         , mastClientId mastClientId39,40
+                         , mastClientKey mastClientKey40,41
+                         , mastClientSecret mastClientSecret41,42
+                         , mastAccessToken mastAccessToken42,43
+data Config Config46,47
+data Config = Config Config46,47
+data Config = Config { twitter twitter46,47
+                     , mastodon mastodon47,48
+mastOpts, cnfOpts cnfOpts52,53
+mastOpts,mastOpts52,53
+mastOpts mastOpts53,54
+cnfOpts cnfOpts54,55
+instance instance56,57
+main main77,78
+main main78,79
+discardValue discardValue108,109
+discardValue discardValue109,110
+ignoreParseError ignoreParseError111,112
+ignoreParseError ignoreParseError112,113
+getStatus getStatus119,120
+getStatus getStatus120,121

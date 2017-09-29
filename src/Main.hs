@@ -21,7 +21,7 @@ import           Network.WebSockets
 import           System.Environment
 import           Text.HTML.TagSoup
 import           Text.Mustache
-import           Web.Hastodon               (Status (..), accountUsername)
+import           Web.Hastodon               (Status (..), accountAcct)
 import qualified Web.Twitter.Conduit        as Tw
 import           Wuss                       hiding (Config, defaultConfig)
 
@@ -104,7 +104,7 @@ main = do
                   cont  = fromTagText =<< filter isTagText (parseTags statusContent)
                   toot | length cont > threshold = take (threshold - 4) cont ++ "..."
                        | otherwise = cont
-                  go    = null statusMentions && accountUsername statusAccount == mastUserName
+                  go    = null statusMentions && accountAcct statusAccount == mastUserName
                   tweet = renderMustache template (val & key "content" . _String .~ T.pack toot)
               when go $ ignoreTwitterError $ discardValue $
                 Tw.call' (Tw.setCredential oauth creds Tw.def) man $

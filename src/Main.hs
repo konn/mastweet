@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric, ExtendedDefaultRules, LambdaCase    #-}
 {-# LANGUAGE NamedFieldPuns, OverloadedStrings, RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables                                #-}
 {-# OPTIONS_GHC -Wno-type-defaults -Wno-orphans #-}
 module Main where
 import           Control.Exception
@@ -103,14 +104,17 @@ main = do
                           fromTagText =<< filter isTagText (parseTags statusContent)
                   go    = null statusMentions && accountUsername statusAccount == mastUserName
                   tweet = renderMustache template (val & key "content" . _String .~ T.pack toot)
-              when go $ discardValue $
+              when go $ ignoreTwitterError $ discardValue $
                 Tw.call' (Tw.setCredential oauth creds Tw.def) man $
                 Tw.update $ LT.toStrict tweet
 
-
-
 discardValue :: Functor f => f Value -> f ()
 discardValue = void
+
+ignoreTwitterError :: IO a -> IO ()
+ignoreTwitterError act = try act >>= \case
+  Left (_ :: Tw.TwitterError) -> return ()
+  Right _ -> return ()
 
 ignoreParseError :: IO a -> IO ()
 ignoreParseError act =

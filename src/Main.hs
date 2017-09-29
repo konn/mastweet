@@ -98,7 +98,9 @@ main = do
                   creds = Tw.Credential [("oauth_token", BS.pack twitAccessToken)
                                         ,("oauth_token_secret", BS.pack twitAccessTokenSecret)
                                         ]
-                  toot  = fromTagText =<< filter isTagText (parseTags statusContent)
+                  trivial = LT.length $ renderMustache template (val & key "content" . _String .~ "")
+                  toot  = take (140 - fromIntegral trivial) $
+                          fromTagText =<< filter isTagText (parseTags statusContent)
                   go    = null statusMentions && accountUsername statusAccount == mastUserName
                   tweet = renderMustache template (val & key "content" . _String .~ T.pack toot)
               when go $ discardValue $

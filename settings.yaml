@@ -3,8 +3,8 @@ mastodon:
   oauth_uri: mstdn.jp/oauth
   api_uri: mstdn.jp/api/v1
   streaming_uri: streaming.mstdn.jp/api/v1/streaming
-  user_name: konn
-  client_id: 128809
+  user_name: USER_NAME
+  client_id: CLIENT_ID (NOT REQUIRED)
   client_key: "Client Key for Mastodon App"
   client_secret: "Client Secret for Mastodon App"
   access_token: "Access Token for Mastodon App"

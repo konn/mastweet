@@ -14,3 +14,6 @@ twitter:
   consumer_secret: "Twitter Consumer Secret"
   access_token: "Twitter Access Token"
   access_token_secret: "Twitter Access Token Secret"
+
+template: |
+  {{content}} [亡命Mastodonより： {{url}}]

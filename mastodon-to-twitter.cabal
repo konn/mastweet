@@ -25,6 +25,7 @@ executable mastodon-to-twitter
                      , Hastodon
                      , twitter-conduit
                      , tagsoup
+                     , stache
                      , text
                      , bytestring
                      , wuss

@@ -21,9 +21,9 @@ import           Network.WebSockets
 import           System.Environment
 import           Text.HTML.TagSoup
 import           Text.Mustache
-import           Web.Hastodon               (Status (..), accountAcct)
-import qualified Web.Twitter.Conduit        as Tw
-import           Wuss                       hiding (Config, defaultConfig)
+-- import           Web.Hastodon               (Status (..), accountAcct)
+import qualified Web.Twitter.Conduit as Tw
+import           Wuss                hiding (Config, defaultConfig)
 
 default (String)
 
@@ -51,7 +51,7 @@ data Config = Config { twitter  :: Twitter
                      , mastodon :: Mastodon
                      , template :: Template
                      }
-            deriving ( Show, Eq, Ord, Generic)
+            deriving (Show, Eq, Ord, Generic)
 
 
 instance FromJSON Template where
@@ -59,9 +59,11 @@ instance FromJSON Template where
     either (fail . show) return $
     compileMustacheText "template" (LT.fromStrict t)
 
-mastOpts, cnfOpts :: Options
+mastOpts, cnfOpts, statOpts, accountOpts :: Options
 mastOpts = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 4}
 cnfOpts = defaultOptions { fieldLabelModifier = id}
+statOpts = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 6}
+accountOpts = defaultOptions { fieldLabelModifier = camelTo2 '_' . drop 7}
 
 instance FromJSON Mastodon where
   parseJSON = genericParseJSON mastOpts
@@ -76,13 +78,29 @@ instance FromJSON Twitter where
 instance FromJSON Config where
   parseJSON = genericParseJSON cnfOpts
 
+data Status = Status { statusContent  :: String
+                     , statusMentions :: [String]
+                     , statusAccount  :: Account
+                     }
+            deriving (Read, Show, Eq, Ord, Generic)
+data Account = Account { accountAcct :: String
+                       }
+             deriving (Read, Show, Eq, Ord, Generic)
+
+
+instance FromJSON Account where
+  parseJSON = genericParseJSON accountOpts
+
+instance FromJSON Status where
+  parseJSON = genericParseJSON statOpts
+
 main :: IO ()
 main = do
   fp <- fromMaybe "settings.yaml" . listToMaybe <$> getArgs
   decodeFileEither fp >>= \case
     Left err -> throwIO err
     Right Config{template, mastodon = Mastodon{..}, twitter = Twitter{..}} ->
-      ignoreParseError $
+      ignoreParseError $ ignoreHandshakeException $
       runSecureClientWith
           mastInstance
           443
@@ -123,6 +141,15 @@ ignoreParseError act =
   let loop = try act >>= \case
         Right _ -> loop
         Left ParseException{} -> loop
+        _ -> return ()
+  in loop
+
+
+ignoreHandshakeException :: IO a -> IO ()
+ignoreHandshakeException act =
+  let loop = try act >>= \case
+        Right _ -> loop
+        Left MalformedResponse{} -> loop
         _ -> return ()
   in loop
 
